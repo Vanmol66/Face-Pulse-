@@ -1,0 +1,13 @@
+Requirements
+
+- Python 3.8 or 3.10
+- TensorFlow
+- OpenCV
+- DeepFace
+- MTCNN
+- Tkinter
+- Pandas
+- playsound
+- Pillow
+- Django 
+- psycopg2 - binary(for postgres if using)

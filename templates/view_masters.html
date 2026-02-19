@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<!-- 🚆 Top Banner with Logo -->
+<header style="background-color:#ffbf00; color:#1e3d59; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; font-weight:bold; font-size:1.3em; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+    <div style="display:flex; align-items:center; gap:16px;">
+        <img src="{% static 'logo2.jpeg' %}" alt="Railways Logo" style="height:40px; width:auto;">
+        <span>Indian Railways Smart Access System</span>
+    </div>
+</header>
+
+<!-- 📦 Page Layout -->
+<div style="display:flex; min-height:85vh; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <!-- 🧭 Sidebar -->
+    <nav style="background-color:#00487c; color:white; width:230px; padding:25px 20px; display:flex; flex-direction:column; gap:20px; box-shadow:2px 0 8px rgba(0,0,0,0.05);">
+        <h2 style="font-size:1.3em;">Menu</h2>
+        <a href="{% url 'dashboard' %}" style="color:white; text-decoration:none; padding:8px; border-radius:4px;">🏠 Dashboard</a>
+        
+        <a href="{% url 'view_users' %}" style="color:white; text-decoration:none; padding:8px; border-radius:4px;">👥 View All Users</a>
+        
+        <a href="{% url 'view_masters' %}" style="color:#ffbf00; text-decoration:none; background-color:rgba(255,255,255,0.1); padding:8px; border-radius:4px;">📁 View Personal Details</a>
+
+        <form method="POST" action="{% url 'logout' %}" style="margin-top:auto;">
+            {% csrf_token %}
+            <button type="submit" style="background-color:#d32f2f; color:white; border:none; padding:10px 12px; font-size:1em; border-radius:4px; cursor:pointer; width:100%;">🚪 Logout</button>
+        </form>
+    </nav>
+
+    <!-- 📋 Main Content -->
+    <main style="flex:1; padding:40px; background-color:#f4f6f8;">
+        
+        <!-- Page Heading & Actions -->
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #ffbf00; padding-bottom:10px; margin:0 0 30px;">
+            <h1 style="color:#1e3d59; font-size:2em; margin:0;">
+                All Personal Details
+            </h1>
+            {% if request.user.role_id == 1 or request.user.role_id == 2 %}
+            <a href="{% url 'create_master' %}"> <!-- Assumes a URL named 'create_master' -->
+                <button style="background-color:#00487c; color:white; border:none; padding:10px 16px; font-size:1em; border-radius:4px; cursor:pointer;">
+                    + Add New Details
+                </button>
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Styled User Table -->
+        <div style="overflow-x:auto; background-color:#ffffff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            <table style="width:100%; border-collapse:collapse; font-size:1em;">
+                <thead style="background-color:#00487c; color:white;">
+                    <tr>
+                        <th style="padding:15px 12px; text-align:left;">Photo</th>
+                        <th style="padding:15px 12px; text-align:left;">Employee ID</th>
+                        <th style="padding:15px 12px; text-align:left;">Full Name</th>
+                        <th style="padding:15px 12px; text-align:left;">Contact</th>
+                        <th style="padding:15px 12px; text-align:left;">Department</th>
+                        <th style="padding:15px 12px; text-align:left;">Joining Date</th>
+                        <th style="padding:15px 12px; text-align:center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for master in masters %}
+                    <tr style="border-bottom:1px solid #e0e0e0; background-color:white;" onmouseover="this.style.backgroundColor='#f9f9f9'" onmouseout="this.style.backgroundColor='white'">
+                        <td style="padding:10px 12px; vertical-align:middle;">
+                            {% if master.photo %}
+                                <img src="{{ master.photo.url }}" alt="Photo" style="height:50px; width:50px; border-radius:50%; object-fit:cover;">
+                            {% else %}
+                                <div style="height:50px; width:50px; border-radius:50%; background-color:#f0f0f0; display:inline-block;"></div>
+                            {% endif %}
+                        </td>
+                        <td style="padding:10px 12px; vertical-align:middle;">{{ master.employee_id }}</td>
+                        <td style="padding:10px 12px; vertical-align:middle;">{{ master.full_name }}</td>
+                        <td style="padding:10px 12px; vertical-align:middle;">{{ master.contact }}</td>
+                        <td style="padding:10px 12px; vertical-align:middle;">{{ master.department.department_name }}</td>
+                        <td style="padding:10px 12px; vertical-align:middle;">{{ master.joining_date|date:"d M Y" }}</td>
+                        <td style="padding:10px 12px; text-align:center; vertical-align:middle; white-space:nowrap;">
+                            {% if request.user.role_id == 1 or request.user.role_id == 2 %}
+                                <a href="{% url 'update_master' master.employee_id %}" style="display:inline-block; background-color:#0072bc; color:white; text-decoration:none; padding:6px 12px; border-radius:4px; font-size:0.9em; margin-right:5px;">Update</a>
+                                <a href="{% url 'delete_master' master.employee_id %}" style="display:inline-block; background-color:#d32f2f; color:white; text-decoration:none; padding:6px 12px; border-radius:4px; font-size:0.9em;">Delete</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding:25px; font-style:italic; color:#666;">
+                            No personal details found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<!-- 🌐 Footer -->
+<footer style="background-color:#1e3d59; color:white; padding:40px 60px; font-size:0.9em;">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; max-width:1200px; margin:auto;">
+        <!-- Footer content as in previous examples -->
+    </div>
+    <div style="border-top:1px solid #4a6a8a; text-align:center; padding-top:20px; margin-top:20px; font-size:0.85em;">
+        © 2025 Research Design and Standards Organisation, Indian Railways – All rights reserved.
+    </div>
+</footer>
+
+{% endblock %}

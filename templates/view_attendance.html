@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<!-- 🚆 Top Banner with Logo -->
+<header style="background-color:#ffbf00; color:#1e3d59; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; font-weight:bold; font-size:1.3em; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+    <div style="display:flex; align-items:center; gap:16px;">
+        <img src="{% static 'logo2.jpeg' %}" alt="Railways Logo" style="height:40px; width:auto;">
+        <span>Indian Railways Smart Access System</span>
+    </div>
+</header>
+
+<!-- 📦 Page Layout -->
+<div style="display:flex; min-height:85vh; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <!-- 🧭 Sidebar -->
+    <nav style="background-color:#00487c; color:white; width:230px; padding:25px 20px; display:flex; flex-direction:column; gap:20px; box-shadow:2px 0 8px rgba(0,0,0,0.05);">
+        <h2 style="font-size:1.3em;">Menu</h2>
+        <a href="{% url 'dashboard' %}" style="color:white; text-decoration:none; padding:8px; border-radius:4px;">🏠 Dashboard</a>
+        
+        <a href="{% url 'view_users' %}" style="color:white; text-decoration:none; padding:8px; border-radius:4px;">👥 View All Users</a>
+
+        <a href="{% url 'view_departments' %}" style="color:white; text-decoration:none; padding:8px; border-radius:4px;">📁 View Departments</a>
+        
+        <a href="{% url 'view_masters' %}" style="color:white; text-decoration:none; padding:8px; border-radius:4px;">📁 View Personal Details</a>
+
+        <!-- Assuming this is the attendance log page, highlight it -->
+        <a href="#" style="color:#ffbf00; text-decoration:none; background-color:rgba(255,255,255,0.1); padding:8px; border-radius:4px;">📅 Attendance Log</a>
+
+        <form method="POST" action="{% url 'logout' %}" style="margin-top:auto;">
+            {% csrf_token %}
+            <button type="submit" style="background-color:#d32f2f; color:white; border:none; padding:10px 12px; font-size:1em; border-radius:4px; cursor:pointer; width:100%;">🚪 Logout</button>
+        </form>
+    </nav>
+
+    <!-- 📋 Main Content -->
+    <main style="flex:1; padding:40px; background-color:#f4f6f8;">
+        
+        <!-- Page Heading & Actions -->
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #ffbf00; padding-bottom:10px; margin:0 0 30px;">
+            <h1 style="color:#1e3d59; font-size:2em; margin:0;">
+                📅 Attendance Log
+            </h1>
+            <!-- Add any action buttons here if needed -->
+        </div>
+
+        <!-- Styled Attendance Table -->
+        <div style="overflow-x:auto; background-color:#ffffff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            <table style="width:100%; border-collapse:collapse; font-size:1em;">
+                <thead style="background-color:#00487c; color:white;">
+                    <tr>
+                        <th style="padding:15px 12px; text-align:left;">Username</th>
+                        <th style="padding:15px 12px; text-align:left;">Date</th>
+                        <th style="padding:15px 12px; text-align:left;">Time</th>
+                        <th style="padding:15px 12px; text-align:left;">Event</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr style="border-bottom:1px solid #e0e0e0; background-color:white;" onmouseover="this.style.backgroundColor='#f9f9f9'" onmouseout="this.style.backgroundColor='white'">
+                        <td style="padding:12px;">{{ log.user.username }}</td>
+                        <td style="padding:12px;">{{ log.date }}</td>
+                        <td style="padding:12px;">{{ log.time }}</td>
+                        <td style="padding:12px;">
+                            <span style="padding:4px 8px; border-radius:4px; font-size:0.9em; font-weight:bold;
+                                {% if log.event == 'Check In' %}
+                                    background-color:#e8f5e8; color:#2e7d32;
+                                {% elif log.event == 'Check Out' %}
+                                    background-color:#fff3e0; color:#f57c00;
+                                {% else %}
+                                    background-color:#f3e5f5; color:#7b1fa2;
+                                {% endif %}
+                            ">
+                                {{ log.event }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align:center; padding:25px; font-style:italic; color:#666;">
+                            No attendance logs found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Optional: Add summary statistics -->
+        {% if logs %}
+        <div style="margin-top:20px; padding:20px; background-color:#ffffff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            <h3 style="color:#1e3d59; margin:0 0 10px;">Summary</h3>
+            <p style="margin:5px 0; color:#666;">Total Records: <strong>{{ logs|length }}</strong></p>
+        </div>
+        {% endif %}
+    </main>
+</div>
+
+<!-- 🌐 Footer -->
+<footer style="background-color:#1e3d59; color:white; padding:40px 60px; font-size:0.9em;">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; max-width:1200px; margin:auto;">
+        <!-- Footer content as needed -->
+    </div>
+    <div style="border-top:1px solid #4a6a8a; text-align:center; padding-top:20px; margin-top:20px; font-size:0.85em;">
+        © 2025 Research Design and Standards Organisation, Indian Railways – All rights reserved.
+    </div>
+</footer>
+
+{% endblock %}

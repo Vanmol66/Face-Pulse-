@@ -1,0 +1,158 @@
+{% comment %} {% extends "base.html" %} {% endcomment %}
+{% load static %}
+{% block content %}
+
+<!-- 🚆 Top Banner -->
+<header style="background-color:#ffbf00; color:#1e3d59; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; font-weight:bold; font-size:1.3em;">
+    <img src="{% static 'logo2.jpeg' %}" alt="Railways Logo" style="height:40px; width:auto;">
+    <div style="flex:1; text-align:center;">Indian Railways Smart Access System</div>
+</header>
+
+<!-- 📦 Page Layout -->
+<div style="display:flex; min-height:85vh; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <!-- 🧭 Sidebar -->
+    <nav style="background-color:#00487c; color:white; width:230px; padding:25px 20px; display:flex; flex-direction:column; gap:20px; box-shadow:2px 0 8px rgba(0,0,0,0.05);">
+        <h2 style="font-size:1.3em;">Menu</h2>
+        <a href="{% url 'dashboard' %}" style="color:white; text-decoration:none;">🏠 Dashboard</a>
+        {% if role == 1 or role == 2 or role == 3 %}
+        <a href="{% url 'view_my_profile' %}">
+  <button style="background-color:#00487c; color:white; padding:8px; border:none; border-radius:4px;">
+    👤 View My Profile
+  </button>
+            
+        {% endif %}
+        {% if role == 4 %}
+            <p>👋 Welcome, {{ user.username }}</p>
+        {% endif %}
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" style="background-color:#d32f2f; color:white; border:none; padding:8px 12px; font-size:0.9em; border-radius:4px; cursor:pointer;">🚪 Logout</button>
+        </form>
+    </nav>
+
+    <!-- 📋 Main Content -->
+    <main style="flex:1; padding:40px; background-color:#f4f6f8;">
+        <h1 style="color:#1e3d59; border-bottom:2px solid #ffbf00; padding-bottom:10px; margin-bottom:30px; font-size:2em;">Dashboard</h1>
+
+        {% if role == 1 %}
+            <section>
+                <h2 style="color:#00487c;">Admin Controls</h2>
+                <div style="display:flex; gap:12px; margin-top:10px;">
+                    <a href="{% url 'register_user' %}">
+                        <button style="background-color:#00487c; color:white; border:none; padding:10px 16px; font-size:1em; border-radius:4px; cursor:pointer;">Register User</button>
+                    </a>
+                    <a href="{% url 'view_users' %}">
+                        <button style="background-color:#00487c; color:white; border:none; padding:10px 16px; font-size:1em; border-radius:4px; cursor:pointer;">View All Users</button>
+                    </a>
+                </div>
+            </section>
+        {% elif role == 2 %}
+            <section>
+                <h2 style="color:#00487c;">Manager Controls</h2>
+                <div style="display:flex; gap:12px; margin-top:10px;">
+                    <a href="{% url 'register_user' %}">
+                        <button style="background-color:#00487c; color:white; border:none; padding:10px 16px; font-size:1em; border-radius:4px; cursor:pointer;">Register User</button>
+                    </a>
+                    <a href="{% url 'view_users' %}">
+                        <button style="background-color:#00487c; color:white; border:none; padding:10px 16px; font-size:1em; border-radius:4px; cursor:pointer;">View Users</button>
+                    </a>
+                </div>
+            </section>
+        {% elif role == 3 %}
+            <section>
+                <h2 style="color:#00487c;">Operator Controls</h2>
+                <a href="{% url 'register_user' %}">
+                    <button style="background-color:#00487c; color:white; border:none; padding:10px 16px; font-size:1em; border-radius:4px; cursor:pointer;">Register User</button>
+                </a>
+            </section>
+        {% elif role == 4 %}
+            <section>
+                <h2 style="color:#00487c;">Your Profile</h2>
+                <div style="background-color:#ffffff; border:1px solid #ccc; border-radius:8px; padding:20px; max-width:500px; box-shadow:0 2px 6px rgba(0,0,0,0.1); margin-top:20px;">
+                    <h3 style="color:#00487c; margin-bottom:15px;">Account Details</h3>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <div><strong>Username:</strong> {{ user.username }}</div>
+                        <div><strong>Email:</strong> {{ user.email }}</div>
+                        <div><strong>Role:</strong> {{ user.get_role_id_display }}</div>
+                    </div>
+                </div>
+            </section>
+            
+     <a href="{% url 'view_personal_info' %}">
+    <button style="background-color:#00487c; color:white; border:none; padding:10px 16px; font-size:1em; border-radius:4px; cursor:pointer; margin-top:10px;">
+        📁 View My Info
+    </button>
+</a>
+
+        {% endif %}
+         <!-- 🎯 Attendance View Buttons by Role -->
+{% if role == 1 or role == 2 or role == 3 %}
+<section style="margin-top:30px;">
+    <h3 style="color:#00487c;">Quick Access</h3>
+
+    <a href="{% url 'view_departments' %}">
+        <button style="background-color:#00487c; color:white; border:none; padding:10px 16px; font-size:1em; border-radius:4px; cursor:pointer;">📁 View Departments</button>
+    </a>
+
+    <a href="{% url 'view_masters' %}">
+        <button style="background-color:#00487c; color:white; border:none; padding:10px 16px; font-size:1em; border-radius:4px; cursor:pointer;">📁 View Personal Details</button>
+    </a>
+
+    <a href="{% url 'view_attendance' %}">
+        <button style="background-color:#00487c; color:white; border:none; padding:10px 16px; font-size:1em; border-radius:4px; cursor:pointer; margin-top:10px;">📅 View Attendance</button>
+    </a>
+</section>
+{% elif role == 4 %}
+<section style="margin-top:30px;">
+    <h3 style="color:#00487c;">My Attendance</h3>
+    <a href="{% url 'view_attendance' %}">
+        <button style="background-color:#00487c; color:white; border:none; padding:10px 16px; font-size:1em; border-radius:4px; cursor:pointer;">📅 My Attendance</button>
+    </a>
+</section>
+{%endif%}
+
+      
+    </main>
+</div>
+
+
+<!-- 🌐 Footer -->
+<footer style="margin-top:80px; background-color:#1e3d59; color:white; padding:40px 60px; font-size:0.9em;">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; max-width:1200px; margin:auto;">
+
+        <div style="flex:1 1 200px; margin-bottom:30px;">
+            <h3 style="color:#ffbf00; margin-bottom:12px;">About RDSO</h3>
+            <ul style="list-style:none; padding:0;">
+                <li>Research Design & Standards Organisation</li>
+                <li>Indian Railways</li>
+                <li>Lucknow, India</li>
+            </ul>
+        </div>
+
+        <div style="flex:1 1 200px; margin-bottom:30px;">
+            <h3 style="color:#ffbf00; margin-bottom:12px;">Connect With Us</h3>
+            <ul style="list-style:none; padding:0;">
+                <li><a href="#" style="color:white; text-decoration:none;">Facebook</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">Twitter</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">LinkedIn</a></li>
+            </ul>
+        </div>
+
+        <div style="flex:1 1 200px; margin-bottom:30px;">
+            <h3 style="color:#ffbf00; margin-bottom:12px;">Resources</h3>
+            <ul style="list-style:none; padding:0;">
+                <li><a href="#" style="color:white; text-decoration:none;">Contact Us</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">Help Desk</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">Privacy Policy</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="border-top:1px solid #ccc; text-align:center; padding-top:20px; margin-top:20px; font-size:0.85em;">
+        © 2025 Research Design and Standards Organisation, Indian Railways – All rights reserved.
+    </div>
+</footer>
+
+
+{% endblock %}

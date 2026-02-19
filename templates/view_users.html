@@ -1,0 +1,113 @@
+{% comment %} {% extends "base.html" %} {% endcomment %}
+{% load static %}
+{% block content %}
+
+<!-- 🚆 Top Banner with Logo -->
+<header style="background-color:#ffbf00; color:#1e3d59; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; font-weight:bold; font-size:1.3em; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+    <div style="display:flex; align-items:center; gap:16px;">
+        <img src="{% static 'logo2.jpeg' %}" alt="Railways Logo" style="height:40px; width:auto;">
+        <span>Indian Railways Smart Access System</span>
+    </div>
+</header>
+
+<!-- 📦 Page Layout -->
+<div style="display:flex; min-height:85vh; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <!-- 🧭 Sidebar -->
+    <nav style="background-color:#00487c; color:white; width:230px; padding:25px 20px; display:flex; flex-direction:column; gap:20px; box-shadow:2px 0 8px rgba(0,0,0,0.05);">
+        <h2 style="font-size:1.3em;">Menu</h2>
+        <a href="{% url 'dashboard' %}" style="color:white; text-decoration:none; padding:8px; border-radius:4px;">🏠 Dashboard</a>
+        
+        {% if request.user.role_id == 1 or request.user.role_id == 2 %}
+            <a href="{% url 'view_users' %}" style="color:#ffbf00; text-decoration:none; background-color:rgba(255,255,255,0.1); padding:8px; border-radius:4px;">👥 View All Users</a>
+        {% endif %}
+        
+        <a href="{% url 'view_my_profile' %}" style="color:white; text-decoration:none; padding:8px; border-radius:4px;">👤 View My Profile</a>
+
+        <form method="POST" action="{% url 'logout' %}" style="margin-top:auto;">
+            {% csrf_token %}
+            <button type="submit" style="background-color:#d32f2f; color:white; border:none; padding:10px 12px; font-size:1em; border-radius:4px; cursor:pointer; width:100%;">🚪 Logout</button>
+        </form>
+    </nav>
+
+    <!-- 📋 Main Content -->
+    <main style="flex:1; padding:40px; background-color:#f4f6f8;">
+        
+        <!-- Page Heading -->
+        <h1 style="color:#1e3d59; border-bottom:2px solid #ffbf00; padding-bottom:10px; margin:0 0 30px; font-size:2em;">
+            All Users
+        </h1>
+
+        <!-- Styled User Table -->
+        <div style="overflow-x:auto; background-color:#ffffff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            <table style="width:100%; border-collapse:collapse; font-size:1em;">
+                <thead style="background-color:#00487c; color:white;">
+                    <tr>
+                        <th style="padding:15px 12px; text-align:left;">ID</th>
+                        <th style="padding:15px 12px; text-align:left;">Username</th>
+                        <th style="padding:15px 12px; text-align:left;">Email</th>
+                        <th style="padding:15px 12px; text-align:left;">Role</th>
+                        <th style="padding:15px 12px; text-align:center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr style="border-bottom:1px solid #e0e0e0; background-color:white;" onmouseover="this.style.backgroundColor='#f9f9f9'" onmouseout="this.style.backgroundColor='white'">
+                        <td style="padding:12px; text-align:left;">{{ user.id }}</td>
+                        <td style="padding:12px; text-align:left;">{{ user.username }}</td>
+                        <td style="padding:12px; text-align:left;">{{ user.email }}</td>
+                        <td style="padding:12px; text-align:left;">{{ user.get_role_id_display }}</td>
+                        <td style="padding:12px; text-align:center; white-space:nowrap;">
+                            {% if request.user.role_id == 1 or request.user.role_id == 2 %}
+                                <a href="{% url 'update_user' user.id %}" style="display:inline-block; background-color:#0072bc; color:white; text-decoration:none; padding:6px 12px; border-radius:4px; font-size:0.9em; margin-right:5px;">Update</a>
+                                <a href="{% url 'delete_user' user.id %}" style="display:inline-block; background-color:#d32f2f; color:white; text-decoration:none; padding:6px 12px; border-radius:4px; font-size:0.9em;">Delete</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding:25px; font-style:italic; color:#666;">
+                            No users found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<!-- 🌐 Footer -->
+<footer style="background-color:#1e3d59; color:white; padding:40px 60px; font-size:0.9em;">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; max-width:1200px; margin:auto;">
+        <div style="flex:1 1 200px; margin-bottom:30px;">
+            <h3 style="color:#ffbf00; margin-bottom:12px;">About RDSO</h3>
+            <ul style="list-style:none; padding:0; line-height:1.6;">
+                <li>Research Design & Standards Organisation</li>
+                <li>Indian Railways</li>
+                <li>Lucknow, India</li>
+            </ul>
+        </div>
+        <div style="flex:1 1 200px; margin-bottom:30px;">
+            <h3 style="color:#ffbf00; margin-bottom:12px;">Connect With Us</h3>
+            <ul style="list-style:none; padding:0; line-height:1.6;">
+                <li><a href="#" style="color:white; text-decoration:none;">Facebook</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">Twitter</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">LinkedIn</a></li>
+            </ul>
+        </div>
+        <div style="flex:1 1 200px; margin-bottom:30px;">
+            <h3 style="color:#ffbf00; margin-bottom:12px;">Resources</h3>
+            <ul style="list-style:none; padding:0; line-height:1.6;">
+                <li><a href="#" style="color:white; text-decoration:none;">Contact Us</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">Help Desk</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">Privacy Policy</a></li>
+            </ul>
+        </div>
+    </div>
+    <div style="border-top:1px solid #4a6a8a; text-align:center; padding-top:20px; margin-top:20px; font-size:0.85em;">
+        © 2025 Research Design and Standards Organisation, Indian Railways – All rights reserved.
+    </div>
+</footer>
+
+{% endblock %}

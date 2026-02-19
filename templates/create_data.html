@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- 
+  This template has been updated with modern CSS styling based on your example.
+  - Styles are defined in the <style> block below for easy customization.
+  - The form is rendered field-by-field to allow for custom styling.
+  - IMPORTANT: For input fields to be styled correctly, you need to add a CSS class
+    in your Django forms.py file. See the detailed comment within the <style> block.
+-->
+
+<style>
+  /* Banner Styles */
+  .banner {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #ffbf00;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 40px;
+  }
+  .banner-logo {
+    height: 60px;
+    margin-bottom: 10px;
+  }
+  .banner-title {
+    margin: 0;
+    color: #1e3d59;
+    font-size: 1.8em;
+  }
+
+  /* Form Container Styles */
+  .form-container {
+    display: flex;
+    justify-content: center;
+    padding: 0 20px; /* Adds padding for smaller screens */
+  }
+  .form-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 30px 40px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .form-card-title {
+    color: #00487c;
+    font-size: 1.6em;
+    margin-top: 0;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  /* Form Element Styles */
+  .styled-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px; /* Defines space between form fields */
+  }
+
+  .form-field-wrapper {
+    /* This div wraps each label and input field */
+  }
+
+  .form-field-wrapper label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95em;
+  }
+  
+  /* 
+    ****************************************************************************
+    ** IMPORTANT: For the styles below to apply to your form inputs,          **
+    ** you MUST add the 'form-input' class to your form fields' widgets       **
+    ** in your `forms.py` file.                                               **
+    **                                                                        **
+    ** Example in forms.py:                                                   **
+    **                                                                        **
+    ** class YourForm(forms.Form):                                            **
+    **     username = forms.CharField(                                        **
+    **         widget=forms.TextInput(attrs={                                 **
+    **              'class': 'form-input',                                    **
+    **              'placeholder': 'Enter your username'                      **
+    **         }))                                                            **
+    **     # ... do this for all fields (EmailField, ChoiceField, etc.)       **
+    ****************************************************************************
+  */
+  .form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box; /* Ensures padding doesn't affect the total width */
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .form-input:focus {
+    border-color: #00487c;
+    box-shadow: 0 0 0 3px rgba(0, 72, 124, 0.15);
+    outline: none;
+  }
+  
+  /* Styling for Django's form field errors */
+  .errorlist {
+      color: #D8000C;
+      background-color: #FFD2D2;
+      border: 1px solid #D8000C;
+      border-radius: 4px;
+      padding: 10px 15px;
+      margin: 10px 0 0 0;
+      font-size: 0.9em;
+      list-style-type: none; /* Removes bullet points */
+  }
+
+  .form-submit-btn {
+    background-color: #00487c;
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    font-size: 1.1em;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .form-submit-btn:hover {
+    background-color: #005a9c;
+    transform: translateY(-2px);
+  }
+
+</style>
+
+<!-- Banner -->
+<div class="banner">
+  <!-- The logo path assumes you have a 'static' folder configured -->
+  <img src="{% static 'logo2.jpeg' %}" alt="Logo" class="banner-logo">
+  <h1 class="banner-title">Indian Railways Smart Access System</h1>
+</div>
+
+<!-- Form Container -->
+<div class="form-container">
+  <section class="form-card">
+    <h2 class="form-card-title">📝 {{ title }}</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="styled-form" novalidate>
+      {% csrf_token %}
+
+      <!-- Renders form-level errors (e.g., non_field_errors) -->
+      {% if form.non_field_errors %}
+          <div class="errorlist">
+              {% for error in form.non_field_errors %}
+                  {{ error }}
+              {% endfor %}
+          </div>
+      {% endif %}
+
+      <!-- Loop through form fields to apply custom styling -->
+      {% for field in form %}
+        <div class="form-field-wrapper">
+          {{ field.label_tag }}
+          {{ field }}
+          
+          <!-- Display field-specific errors -->
+          {% if field.errors %}
+              {{ field.errors }}
+          {% endif %}
+          
+          <!-- Optional: Display help text if it exists -->
+          {% if field.help_text %}
+            <small style="display: block; margin-top: 5px; color: #666;">{{ field.help_text }}</small>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="form-submit-btn">✅ Submit</button>
+    </form>
+  </section>
+</div>
+
+{% endblock %}

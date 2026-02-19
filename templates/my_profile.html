@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- 🚆 Top Banner with Logo -->
+<header style="background-color:#ffbf00; color:#1e3d59; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; font-weight:bold; font-size:1.3em; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+    <div style="display:flex; align-items:center; gap:16px;">
+        <img src="{% static 'logo2.jpeg' %}" alt="Railways Logo" style="height:40px; width:auto;">
+        <span>Indian Railways Smart Access System</span>
+    </div>
+</header>
+
+<!-- 📦 Page Layout -->
+<div style="display:flex; min-height:85vh; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <!-- 🧭 Sidebar -->
+    <nav style="background-color:#00487c; color:white; width:230px; padding:25px 20px; display:flex; flex-direction:column; gap:20px; box-shadow:2px 0 8px rgba(0,0,0,0.05);">
+        <h2 style="font-size:1.3em;">Menu</h2>
+        <a href="{% url 'dashboard' %}" style="color:white; text-decoration:none; padding:8px; border-radius:4px;">🏠 Dashboard</a>
+        
+        <a href="{% url 'view_my_profile' %}" style="color:#ffbf00; text-decoration:none; background-color:rgba(255,255,255,0.1); padding:8px; border-radius:4px;">👤 View My Profile</a>
+        
+        <a href="{% url 'view_personal_info' %}" style="color:white; text-decoration:none; padding:8px; border-radius:4px;">📁 View My Info</a>
+
+        <form method="POST" action="{% url 'logout' %}" style="margin-top:auto;">
+            {% csrf_token %}
+            <button type="submit" style="background-color:#d32f2f; color:white; border:none; padding:10px 12px; font-size:1em; border-radius:4px; cursor:pointer; width:100%;">🚪 Logout</button>
+        </form>
+    </nav>
+
+    <!-- 📋 Main Content -->
+    <main style="flex:1; padding:40px; background-color:#f4f6f8;">
+        
+        <!-- Page Heading -->
+        <h1 style="color:#1e3d59; border-bottom:2px solid #ffbf00; padding-bottom:10px; margin:0 0 30px; font-size:2em;">
+            My Profile
+        </h1>
+
+        <div style="display:grid; grid-template-columns: minmax(300px, 1fr) 2fr; gap:30px; align-items:flex-start;">
+            
+            <!-- Left Column: Profile Overview Card -->
+            <div style="background-color:#ffffff; border-radius:8px; padding:25px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                <div style="text-align:center; padding-bottom:20px; border-bottom:1px solid #eee;">
+                    {% if master.photo %}
+                        <img src="{{ master.photo.url }}" alt="User Photo" style="width:140px; height:140px; border-radius:50%; object-fit:cover; border:4px solid #00487c;">
+                    {% else %}
+                        <div style="width:140px; height:140px; border-radius:50%; background-color:#f0f0f0; border:4px solid #ccc; margin:0 auto; display:flex; align-items:center; justify-content:center; text-align:center; font-style:italic; color:#888;">
+                            No Photo
+                        </div>
+                    {% endif %}
+                    <h2 style="margin:20px 0 5px; color:#1e3d59; font-size:1.6em;">{{ user.username }}</h2>
+                    <p style="margin:0; color:#666; font-size:1.1em;">{{ user.get_role_id_display }}</p>
+                </div>
+                <div style="padding:20px 0 0; display:flex; flex-direction:column; gap:12px; font-size:1.1em; color:#333;">
+                    <div><strong>Email:</strong> <span style="color:#555;">{{ user.email }}</span></div>
+                </div>
+            </div>
+
+            <!-- Right Column: Detailed Information Card -->
+            <div style="background-color:#ffffff; border-radius:8px; padding:25px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                
+                <!-- Personal Details Section -->
+                <h3 style="color:#00487c; font-size:1.4em; margin-top:0; margin-bottom:15px;">Personal Details</h3>
+                {% if master %}
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px 25px; font-size:1.1em; color:#333;">
+                        <div><strong>Full Name:</strong><br>{{ master.full_name }}</div>
+                        <div><strong>Father's Name:</strong><br>{{ master.father_name }}</div>
+                        <div><strong>Contact:</strong><br>{{ master.contact }}</div>
+                        <div><strong>Joining Date:</strong><br>{{ master.joining_date|date:"F d, Y" }}</div>
+                        <div style="grid-column: span 2;"><strong>Address:</strong><br>{{ master.address }}</div>
+                    </div>
+                {% else %}
+                    <p style="font-style:italic; color:#666;">No personal data found.</p>
+                {% endif %}
+                
+                <hr style="border:0; border-top:1px solid #eee; margin:25px 0;">
+
+                <!-- Department Info Section -->
+                <h3 style="color:#00487c; font-size:1.4em; margin-top:0; margin-bottom:15px;">Department Info</h3>
+                {% if department %}
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px 25px; font-size:1.1em; color:#333;">
+                        <div><strong>Department:</strong><br>{{ department.department_name }}</div>
+                        <div><strong>Post:</strong><br>{{ department.post }}</div>
+                    </div>
+                {% else %}
+                    <p style="font-style:italic; color:#666;">No department assigned yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- 🌐 Footer -->
+<footer style="background-color:#1e3d59; color:white; padding:40px 60px; font-size:0.9em;">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; max-width:1200px; margin:auto;">
+        <div style="flex:1 1 200px; margin-bottom:30px;">
+            <h3 style="color:#ffbf00; margin-bottom:12px;">About RDSO</h3>
+            <ul style="list-style:none; padding:0; line-height:1.6;">
+                <li>Research Design & Standards Organisation</li>
+                <li>Indian Railways</li>
+                <li>Lucknow, India</li>
+            </ul>
+        </div>
+        <div style="flex:1 1 200px; margin-bottom:30px;">
+            <h3 style="color:#ffbf00; margin-bottom:12px;">Connect With Us</h3>
+            <ul style="list-style:none; padding:0; line-height:1.6;">
+                <li><a href="#" style="color:white; text-decoration:none;">Facebook</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">Twitter</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">LinkedIn</a></li>
+            </ul>
+        </div>
+        <div style="flex:1 1 200px; margin-bottom:30px;">
+            <h3 style="color:#ffbf00; margin-bottom:12px;">Resources</h3>
+            <ul style="list-style:none; padding:0; line-height:1.6;">
+                <li><a href="#" style="color:white; text-decoration:none;">Contact Us</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">Help Desk</a></li>
+                <li><a href="#" style="color:white; text-decoration:none;">Privacy Policy</a></li>
+            </ul>
+        </div>
+    </div>
+    <div style="border-top:1px solid #4a6a8a; text-align:center; padding-top:20px; margin-top:20px; font-size:0.85em;">
+        © 2025 Research Design and Standards Organisation, Indian Railways – All rights reserved.
+    </div>
+</footer>
+
+{% endblock %}
